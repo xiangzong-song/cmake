@@ -1,0 +1,8 @@
+# Project configuration
+# y  = enabled
+# n  = disabled
+# value = set to value
+
+CONFIG_RELEASE_VER=n
+CONFIG_FEATURE_A=y
+CONFIG_LOG_LEVEL=3

@@ -6,6 +6,28 @@ SRC_DIR="src"
 BUILD_DIR="build"
 BIN_DIR="bin"
 
+DO_CLEAN=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --clean|-c)
+            DO_CLEAN=true
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [options]"
+            echo "  --clean     run cmake + make clean before build"
+            echo "  --help, -h  show this help"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--clean]"
+            exit 1
+            ;;
+    esac
+done
+
 # Step 1: Auto-format code
 echo "=== Auto-formatting code with clang-format ==="
 SOURCES=$(find "$SRC_DIR" -name '*.c' -o -name '*.h' | sort)
@@ -24,7 +46,12 @@ echo ""
 echo "=== Build ==="
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
-cmake ..
+
+if [ "$DO_CLEAN" = true ]; then
+    cmake ..
+    make clean
+fi
+
 make -j"$(nproc)"
 cd ..
 
