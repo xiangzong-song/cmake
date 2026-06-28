@@ -7,6 +7,11 @@
 #include "module4_com.h"
 
 int main(void) {
+#ifdef RELEASE_VER
+    printf("release\r\n");
+#else
+    printf("debug\r\n");
+#endif
     init();
     m1_com();
     m2_com();

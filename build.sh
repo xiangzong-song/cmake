@@ -10,7 +10,7 @@ DO_CLEAN=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --clean)
+        --clean|-c)
             DO_CLEAN=true
             shift
             ;;
