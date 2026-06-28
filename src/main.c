@@ -6,7 +6,7 @@ int main(void)
 {
     printf("main!!!\r\n");
     printf("test");
-    m1_com();
+    m1_com()
     m2_com();
     return 0;
 }
