@@ -18,15 +18,52 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Configure CMake
         run: cmake -B build
-
       - name: Build
         run: cmake --build build
-
       - name: Run
         run: ./bin/test
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: bin/test
+
+  notify:
+    if: always()
+    needs: [lint, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download firmware (if build succeeded)
+        if: needs.build.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: firmware
+          path: firmware
+
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: |
+            [CI ${{ needs.build.result }}] ${{ github.repository }} - ${{ github.ref_name }}
+          body: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.triggering_actor }}
+
+            Job Status:
+              lint  — ${{ needs.lint.result }}
+              build — ${{ needs.build.result }}
+
+            Run URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: ${{ secrets.MAIL_TO }}
+          from: CI Bot <${{ secrets.MAIL_FROM }}>
+          attachments: firmware/test
