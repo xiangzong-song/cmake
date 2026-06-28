@@ -4,5 +4,3 @@
 int m1_com(void);
 
 #endif
-
-
