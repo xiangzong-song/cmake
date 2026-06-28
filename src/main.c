@@ -7,7 +7,7 @@
 #include "module4_com.h"
 
 int main(void) {
-#ifdef RELEASE_VER
+#ifdef CONFIG_RELEASE_VER
     printf("release\r\n");
 #else
     printf("debug\r\n");
